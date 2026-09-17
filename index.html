@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menguak Karhutla Jawa Timur — Analisis Kritis 2026</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --bg: #0a0a0a; --bg-2: #141414; --card: #1a1a1a; --fg: #f5f5f4; --muted: #a8a29e;
+  --dim: #44403c; --amber: #f97316; --rust: #c2410c; --lime: #84cc16;
+  --danger: #dc2626; --warning: #f59e0b; --border: rgba(255,255,255,0.1); --blue: #3b82f6;
+}
+* { -webkit-font-smoothing: antialiased; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--fg); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; margin: 0; }
+.font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+.scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--danger); z-index: 999; transition: width 0.1s; width: 0; }
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s, transform 0.8s; }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal-d-1 { transition-delay: 0.1s; } .reveal-d-2 { transition-delay: 0.3s; } .reveal-d-3 { transition-delay: 0.5s; }
+.big-stat { font-weight: 800; line-height: 0.9; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; transition: all 0.3s; }
+.lift:hover { border-color: var(--danger); box-shadow: 0 20px 40px rgba(220, 38, 38, 0.12); transform: translateY(-2px); }
+.tag { font-family: 'JetBrains Mono'; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.marquee-track { animation: marquee 50s linear infinite; display: flex; width: max-content; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--danger); display: inline-block; animation: live-blink 1.5s infinite; }
+@keyframes live-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+#mapSipongi, #mapKliping { width: 100%; height: 100%; min-height: 500px; border-radius: 8px; z-index: 1; }
+.leaflet-popup-content-wrapper { background: rgba(15, 15, 15, 0.95); color: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid var(--danger); }
+.leaflet-popup-tip { background: rgba(15, 15, 15, 0.95); border: 1px solid var(--danger); }
+.leaflet-popup-content { margin: 12px 16px; font-family: 'Plus Jakarta Sans'; font-size: 13px; }
+.leaflet-container a.leaflet-popup-close-button { color: #f5f5f4; }
+.source-text { text-align: right; font-family: 'JetBrains Mono'; font-size: 11px; color: #6b7280; margin-top: 8px; font-weight: 700; }
+.critical-box { background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), transparent); border-left: 3px solid var(--danger); padding: 16px 20px; margin-top: 24px; border-radius: 0 8px 8px 0; }
+.question-box { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent); border-left: 3px solid var(--blue); padding: 20px 24px; margin-top: 24px; border-radius: 0 8px 8px 0; }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Hero Section -->
+<header class="relative min-h-screen flex flex-col justify-between overflow-hidden">
+  <div class="relative z-10 flex justify-between items-center px-8 md:px-14 pt-8">
+    <div class="flex items-center gap-3">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2 C 6 6 4 10 4 13 A 7 7 0 0 0 18 13 C 18 10 16 6 11 2 Z" fill="#dc2626"/></svg>
+      <span class="font-mono text-xs tracking-widest text-stone-400 font-bold">ANALISIS KRITIS KARHUTLA JATIM 2026</span>
+    </div>
+    <div class="font-mono text-xs text-stone-400 flex items-center gap-2">
+      <span class="live-dot"></span>
+      <span id="liveCounter">Krisis iklim terus berlangsung sejak Anda membuka halaman</span>
+    </div>
+  </div>
+
+  <div class="relative z-10 px-8 md:px-14 max-w-7xl">
+    <h1 class="font-display font-extrabold leading-[0.9] tracking-tight reveal reveal-d-1 mt-12" style="font-size: clamp(48px, 9vw, 120px);">
+      Menguak<br>
+      <span class="font-light" style="color: var(--danger);">Karhutla</span><br>
+      Jawa Timur
+    </h1>
+    <p class="mt-10 max-w-xl text-lg md:text-xl text-stone-400 leading-relaxed reveal reveal-d-2">
+      Sebuah perjalanan data untuk memotret kondisi nyata kebakaran hutan dan lahan di Jawa Timur tahun 2026. Menggabungkan data SiPongi, Nusantara Atlas, dan kliping media untuk membongkar fakta: <span class="text-stone-100 font-medium">peringatan dini diabaikan, dan kegagalan tata kelola di lahan yang dikuasai negara.</span>
+    </p>
+  </div>
+
+  <div class="relative z-10 px-8 md:px-14 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-8">
+    <div class="reveal reveal-d-3">
+      <div class="tag mb-2">Gulir untuk menguak</div>
+      <div class="flex items-center gap-3 text-stone-400">
+        <div class="w-12 h-px bg-red-500"></div>
+        <span class="font-mono text-xs">SCROLL ↓</span>
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-4 md:gap-10 reveal reveal-d-4 w-full md:w-auto">
+      <div><div class="big-stat text-xl sm:text-2xl md:text-4xl" style="color: var(--amber);">4.8<span class="text-sm">M Ha</span></div><div class="tag mt-1">Luas Provinsi</div></div>
+      <div><div class="big-stat text-xl sm:text-2xl md:text-4xl">76.187<span class="text-sm">Ha</span></div><div class="tag mt-1">Terbakar 2026</div></div>
+      <div><div class="big-stat text-xl sm:text-2xl md:text-4xl" style="color: var(--rust);">129</div><div class="tag mt-1">Hari Tanpa Hujan</div></div>
+    </div>
+  </div>
+</header>
+
+<section class="border-y border-stone-800 py-5 overflow-hidden bg-stone-950">
+  <div class="marquee-track font-display text-2xl md:text-3xl text-stone-700 font-medium">
+    <div class="flex items-center gap-8 pr-8">
+      <span>Godzilla El Niño & IOD Positif 2026</span><span style="color: var(--danger);">◆</span>
+      <span>129 Hari Tanpa Hujan Ekstrem</span><span style="color: var(--danger);">◆</span>
+      <span class="italic">15.548 Titik Panas Terdeteksi</span><span style="color: var(--danger);">◆</span>
+      <span>Kegagalan mitigasi & tata kelola</span><span style="color: var(--danger);">◆</span>
+    </div>
+    <div class="flex items-center gap-8 pr-8">
+      <span>Godzilla El Niño & IOD Positif 2026</span><span style="color: var(--danger);">◆</span>
+      <span>129 Hari Tanpa Hujan Ekstrem</span><span style="color: var(--danger);">◆</span>
+      <span class="italic">15.548 Titik Panas Terdeteksi</span><span style="color: var(--danger);">◆</span>
+      <span>Kegagalan mitigasi & tata kelola</span><span style="color: var(--danger);">◆</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 Skala Magnitude & Krisis Iklim -->
+<section id="skala" class="py-32 md:py-48 px-8 md:px-14">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-red-500 font-bold">01 / Skala Magnitude & Krisis Iklim</span>
+      <div class="flex-1 h-px bg-stone-800"></div>
+    </div>
+
+    <div class="grid md:grid-cols-12 gap-12 items-start">
+      <div class="md:col-span-7">
+        <h2 class="font-display font-light leading-[0.95] mb-8 reveal" style="font-size: clamp(36px, 5vw, 64px);">
+          Peringatan dini diabaikan,<br>
+          <span class="font-extrabold" style="color: var(--danger);">krisis pun meluas.</span>
+        </h2>
+        <p class="text-lg text-stone-400 leading-relaxed max-w-2xl reveal reveal-d-1">
+          Musim kemarau pertengahan tahun 2026 telah berkembang menjadi krisis ekologis serius. BMKG mencatat anomali iklim ekstrem: Juni 2026 terkering kedelapan sejak 1991, dan Juli 2026 memecahkan rekor sebagai Juli paling kering. Data Nusantara Atlas mencatat 76.187 Ha lahan terbakar hingga Agustus.
+        </p>
+        
+        <div class="critical-box reveal reveal-d-2">
+          <p class="text-stone-300 text-sm md:text-base font-medium">
+            BMKG dan BRIN bersama-sama memproyeksikan fenomena Godzilla El Niño dan fase Positif IOD yang memicu 129 Hari Tanpa Hujan (HTH) ekstrem. Ancaman ini telah diperingatkan sejak awal tahun. Pertanyaannya: <strong>Kenapa kok nggak ada mitigasi sama sekali?</strong> Pemerintah gagal menerjemahkan peringatan dini krisis iklim menjadi langkah mitigasi yang serius.
+          </p>
+        </div>
+      </div>
+
+      <div class="md:col-span-5 reveal reveal-d-2">
+        <div class="card p-8 lift">
+          <div class="tag mb-6">Rekapitulasi Kumulatif (Nusantara Atlas)</div>
+          <div class="space-y-6">
+            <div class="border-l-2 border-red-500 pl-4">
+              <div class="tag text-red-500">Worst Year</div>
+              <div class="big-stat text-4xl mt-1" style="color: var(--danger);">164.290<span class="text-lg ml-1">Ha</span></div>
+              <div class="text-sm text-stone-500 mt-1 font-mono">Tahun 2019</div>
+            </div>
+            <div class="border-l-2 border-lime-500 pl-4">
+              <div class="tag text-lime-500">Best Year</div>
+              <div class="big-stat text-4xl mt-1" style="color: var(--lime);">1.482<span class="text-lg ml-1">Ha</span></div>
+              <div class="text-sm text-stone-500 mt-1 font-mono">Tahun 2022</div>
+            </div>
+            <div class="border-l-2 border-blue-500 pl-4">
+              <div class="tag text-blue-500">Current Year</div>
+              <div class="big-stat text-4xl mt-1" style="color: var(--blue);">76.187<span class="text-lg ml-1">Ha</span></div>
+              <div class="text-sm text-stone-500 mt-1 font-mono">Tahun 2026 (Hingga Agustus)</div>
+            </div>
+            <div class="border-l-2 border-orange-500 pl-4">
+              <div class="tag text-orange-500">Rata-rata per Tahun</div>
+              <div class="big-stat text-4xl mt-1" style="color: var(--amber);">77.462<span class="text-lg ml-1">Ha</span></div>
+              <div class="text-sm text-stone-500 mt-1 font-mono">Nusantara Atlas</div>
+            </div>
+          </div>
+        </div>
+        <div class="source-text">Sumber: Nusantara Atlas (Laporan Analisis Area Terbakar)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 Sebaran Hotspot Detail (SiPongi) -->
+<section id="distribusi-sipongi" class="py-32 md:py-48 px-8 md:px-14 bg-stone-950 border-y border-stone-800">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-red-500 font-bold">02 / Sebaran Hotspot Detail</span>
+      <div class="flex-1 h-px bg-stone-800"></div>
+    </div>
+
+    <div class="grid md:grid-cols-12 gap-8 mb-16">
+      <div class="md:col-span-5 reveal">
+        <h2 class="font-display font-light leading-[0.95] mb-6" style="font-size: clamp(32px, 4.5vw, 48px);">
+          15.548 Titik Panas Terdeteksi <span class="italic font-extrabold" style="color: var(--amber);">di Jawa Timur.</span>
+        </h2>
+        <p class="text-stone-400 leading-relaxed mb-8 text-sm md:text-base">
+          Berdasarkan data detail SiPongi KLHK dari 1 Januari hingga 17 September 2026, tercatat 15.548 titik panas (hotspot) terdeteksi oleh satelit NASA (MODIS, NOAA20, SNPP) di wilayah Jawa Timur. Peta satelit interaktif ini menampilkan sebaran ratusan titik panas aktual tersebut hingga ke tingkat desa.
+        </p>
+        <div class="critical-box">
+          <p class="text-stone-300 text-sm md:text-base font-medium">
+            Kluster 15.548 titik panas yang memadat membuktikan bahwa deteksi dini belum diimbangi dengan respons pemadaman yang cepat. Penanganan di lapangan cenderung mandul dan reaktif—baru bergerak masif setelah titik api membesar dan meluas.
+          </p>
+        </div>
+        <div class="space-y-3 mt-8">
+          <div class="flex items-center gap-3 text-xs font-mono bg-stone-900 p-2 rounded border border-stone-800">
+            <div class="w-3 h-3 rounded-full" style="background: var(--danger); box-shadow: 0 0 10px var(--danger);"></div>
+            <span class="text-stone-100 font-bold">High Confidence</span>
+          </div>
+          <div class="flex items-center gap-3 text-xs font-mono bg-stone-900 p-2 rounded border border-stone-800">
+            <div class="w-3 h-3 rounded-full" style="background: var(--warning); box-shadow: 0 0 10px var(--warning);"></div>
+            <span class="text-stone-100 font-bold">Medium Confidence</span>
+          </div>
+          <div class="flex items-center gap-3 text-xs font-mono bg-stone-900 p-2 rounded border border-stone-800">
+            <div class="w-3 h-3 rounded-full" style="background: var(--muted);"></div>
+            <span class="text-stone-100 font-bold">Low Confidence</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="md:col-span-7 reveal reveal-d-2">
+        <div class="card p-2 h-[550px] md:h-[650px] relative overflow-hidden">
+          <div id="mapSipongi"></div>
+        </div>
+        <div class="source-text">Sumber: Detail Sebaran Hotspot SiPongi KLHK (1 Jan - 17 Sep 2026)</div>
+      </div>
+    </div>
+
+    <!-- Top 5 Hotspot Table -->
+    <div class="card overflow-hidden reveal">
+      <div class="bg-stone-900 px-6 py-4 border-b border-stone-800 flex justify-between items-center">
+        <div class="tag text-stone-300">Top 5 Kabupaten Berdasarkan Jumlah Hotspot</div>
+        <div class="font-mono text-xs text-stone-500">Tahun 2026 (YTD)</div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-stone-900/50">
+            <tr class="text-left text-stone-500 font-mono text-xs uppercase">
+              <th class="px-6 py-3">Rank</th>
+              <th class="px-6 py-3">Kabupaten</th>
+              <th class="px-6 py-3 text-right">Jumlah Hotspot</th>
+            </tr>
+          </thead>
+          <tbody id="hotspotTable" class="divide-y divide-stone-800"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="source-text">Sumber: Akumulasi Hotspot SiPongi KLHK (2026 YTD)</div>
+
+  </div>
+</section>
+
+<!-- 03 Insiden Krisis & Lahan Dikelola Negara (Kliping) -->
+<section id="kliping-media" class="py-32 md:py-48 px-8 md:px-14">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-red-500 font-bold">03 / Insiden Krisis di Lahan Dikuasai Negara</span>
+      <div class="flex-1 h-px bg-stone-800"></div>
+    </div>
+
+    <div class="grid md:grid-cols-12 gap-12 mb-16">
+      <div class="md:col-span-6 reveal">
+        <h2 class="font-display font-light leading-[0.95] mb-6" style="font-size: clamp(32px, 4.5vw, 48px);">
+          Bukan lahan warga,<br>tapi <span class="italic font-extrabold" style="color: var(--danger);">kawasan negara</span> yang terbakar.
+        </h2>
+        <p class="text-stone-400 leading-relaxed text-sm md:text-base mb-6">
+          Rekapitulasi 33 insiden kebakaran dari kliping media pada bulan Agustus 2026 mencatat total 6.941 Hektar lahan terbakar. Yang menjadi permasalahan serius adalah sebagian besar kebakaran terjadi di kawasan yang berada di bawah penguasaan dan pengelolaan kawasan hutan, mulai dari Perhutani, Tahura, hingga Taman Nasional.
+        </p>
+      </div>
+      <div class="md:col-span-6 reveal reveal-d-2 flex flex-col justify-end">
+        <div class="critical-box">
+          <p class="text-stone-300 text-sm md:text-base font-medium">
+            Fakta bahwa sebagian besar titik api berada di wilayah pengelolaan negara mempertegas bahwa peringatan dini dari BMKG dan BRIN tidak disikapi dengan kesiapsiagaan mitigasi yang serius. Hal ini menunjukkan adanya persoalan dalam tata pengelolaan dan pengawasan kawasan hutan. Seharusnya fungsi pencegahan dan perlindungan ekologis berjalan secara optimal.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Peta Kliping -->
+    <div class="grid md:grid-cols-12 gap-8 mb-16">
+      <div class="md:col-span-4 reveal">
+        <h3 class="font-display text-2xl font-bold mb-4">Titik Insiden Agustus 2026</h3>
+        <p class="text-stone-400 text-sm mb-6">
+          Peta berikut menunjukkan lokasi kebakaran kritis berdasarkan laporan media. Klik pada titik marker untuk melihat detail insiden dan luas terbakarnya. Perhatikan bagaimana api menggerus kawasan konservasi paling bergengsi di Jawa Timur.
+        </p>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3 text-xs font-mono bg-stone-900 p-2 rounded border border-stone-800">
+            <div class="w-3 h-3 rounded-full" style="background: var(--danger); box-shadow: 0 0 10px var(--danger);"></div>
+            <span class="text-stone-100 font-bold">Taman Nasional</span>
+          </div>
+          <div class="flex items-center gap-3 text-xs font-mono bg-stone-900 p-2 rounded border border-stone-800">
+            <div class="w-3 h-3 rounded-full" style="background: var(--warning);"></div>
+            <span class="text-stone-100 font-bold">Tahura / Perhutani</span>
+          </div>
+          <div class="flex items-center gap-3 text-xs font-mono bg-stone-900 p-2 rounded border border-stone-800">
+            <div class="w-3 h-3 rounded-full" style="background: var(--muted);"></div>
+            <span class="text-stone-100 font-bold">Lahan Warga / Lainnya</span>
+          </div>
+        </div>
+      </div>
+      <div class="md:col-span-8 reveal reveal-d-2">
+        <div class="card p-2 h-[550px] md:h-[600px] relative overflow-hidden">
+          <div id="mapKliping"></div>
+        </div>
+        <div class="source-text">Sumber: Kliping Karhutla Media (Kompas, BBC, Tempo, BNPB, dll) - Agustus 2026</div>
+      </div>
+    </div>
+
+    <!-- Chart Status Kawasan -->
+    <div class="card p-6 md:p-10 reveal reveal-d-1 mb-16 lift">
+      <div class="flex justify-between items-baseline mb-8">
+        <div class="tag">Luas Terbakar per Status Kawasan (Agustus 2026)</div>
+        <div class="font-mono text-xs text-stone-500">Hektar (Ha)</div>
+      </div>
+      <div class="relative h-[450px]">
+        <canvas id="kawasanChart"></canvas>
+      </div>
+    </div>
+    <div class="source-text">Sumber: Kliping Karhutla Agustus 2026</div>
+
+    <!-- Tabel Kliping -->
+    <div class="card overflow-hidden reveal mt-16">
+      <div class="bg-stone-900 px-6 py-4 border-b border-stone-800 flex justify-between items-center">
+        <div class="tag text-stone-300">Detail Insiden Karhutla Media (Agustus 2026)</div>
+        <div class="font-mono text-xs text-stone-500">Total: 6.941 Ha</div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-stone-900/50">
+            <tr class="text-left text-stone-500 font-mono text-xs uppercase">
+              <th class="px-6 py-3">Lokasi</th>
+              <th class="px-6 py-3">Kabupaten</th>
+              <th class="px-6 py-3">Status Kawasan</th>
+              <th class="px-6 py-3 text-right">Luas (Ha)</th>
+            </tr>
+          </thead>
+          <tbody id="klipingTable" class="divide-y divide-stone-800"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="source-text">Sumber: Kliping Karhutla (ucup) - Agustus 2026</div>
+
+  </div>
+</section>
+
+<!-- 04 Pertanyaan Kritis & Rekomendasi -->
+<section id="kritik" class="py-32 md:py-48 px-8 md:px-14 bg-stone-950 border-y border-stone-800">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-red-500 font-bold">04 / Pertanyaan Kritis: Kegagalan Tata Kelola</span>
+      <div class="flex-1 h-px bg-stone-800"></div>
+    </div>
+
+    <h2 class="font-display font-light leading-[0.95] mb-8 reveal text-center" style="font-size: clamp(36px, 5vw, 64px);">
+      Kegagalan mitigasi atau <span class="italic font-extrabold" style="color: var(--danger);">kegagalan kelola?</span>
+    </h2>
+
+    <div class="question-box reveal reveal-d-1 mb-12">
+      <p class="text-lg text-stone-200 leading-relaxed">
+        Kalau titik-titik kebakaran justru berulang muncul di kawasan yang berada dalam pengelolaan atau penguasaan negara, apakah fenomena ini masih bisa dilihat sebagai sekadar persoalan kebakaran atau kelalaian di level institusi? Atau jangan-jangan kebakaran ini justru sedang menunjukkan adanya <strong class="text-white">kegagalan tata kelola yang lebih sistemik</strong>, mulai dari pengawasan, pengendalian aktivitas di kawasan, sampai mekanisme pertanggungjawaban ketika risiko yang sudah diperingatkan sejak awal tahun benar-benar terjadi?
+      </p>
+    </div>
+
+    <div class="critical-box reveal reveal-d-2 mb-12">
+      <p class="text-stone-300 text-sm md:text-base font-medium">
+        <span class="text-red-500 font-bold">Tuntutan Evaluasi:</span> Pemerintah harus berhenti menjadikan masyarakat sebagai pihak yang terus-menerus diminta waspada dan berhati-hati, sementara tanggung jawab negara dalam mengelola kawasan hutan justru tidak dievaluasi secara serius. Perlindungan hutan merupakan tanggung jawab Negara. Ketika kebakaran berulang terjadi di kawasan yang dikelola Negara, maka pemerintah harus melakukan sistem evaluasi secara total.
+      </p>
+    </div>
+
+    <div class="reveal reveal-d-3">
+      <h3 class="font-display text-2xl font-bold mb-8 text-center">Rekomendasi & Desakan untuk Pemerintah Jawa Timur:</h3>
+      <ol class="space-y-4">
+        <li class="flex gap-4 text-stone-300"><span class="font-mono text-red-500 font-bold text-xl">01</span><span>Melakukan evaluasi total terhadap tata kelola kawasan hutan negara, khususnya kawasan Perhutani, Tahura, Taman Nasional, dan kawasan konservasi yang mengalami kebakaran berulang.</span></li>
+        <li class="flex gap-4 text-stone-300"><span class="font-mono text-red-500 font-bold text-xl">02</span><span>Mengubah pendekatan penanganan karhutla dari reaktif menjadi preventif, dengan menjadikan informasi BMKG, BRIN, Sipongi, dan data lapangan sebagai dasar tindakan mitigasi sebelum terjadi kebakaran.</span></li>
+        <li class="flex gap-4 text-stone-300"><span class="font-mono text-red-500 font-bold text-xl">03</span><span>Menerbitkan pertanggungjawaban setiap institusi pengelola kawasan, baik Perhutani, pengelola taman nasional, Tahura, maupun institusi lainnya. Penguasaan kawasan oleh negara harus diikuti dengan tanggung jawab nyata terhadap keselamatan dan kesejahteraan ekologisnya.</span></li>
+        <li class="flex gap-4 text-stone-300"><span class="font-mono text-red-500 font-bold text-xl">04</span><span>Memperkuat sistem pencegahan berbasis masyarakat, dengan melibatkan masyarakat sekitar hutan dalam pemantauan dan pencegahan kebakaran melalui pendekatan pengetahuan lokal.</span></li>
+        <li class="flex gap-4 text-stone-300"><span class="font-mono text-red-500 font-bold text-xl">05</span><span>Memulihkan kawasan yang telah terbakar, bukan hanya pemadaman. Pemerintah harus memastikan pemulihan fungsi kawasan ekologi, termasuk vegetasi, mata air, habitat satwa, dan fungsi kawasan sebagai penyangga kehidupan.</span></li>
+        <li class="flex gap-4 text-stone-300"><span class="font-mono text-red-500 font-bold text-xl">06</span><span>Menyusun rencana mitigasi karhutla berbasis krisis iklim, karena peningkatan suhu, kekeringan ekstrem, dan perubahan pola curah hujan harus menjadi pertimbangan utama dalam perencanaan pengelolaan hutan dan kawasan konservasi.</span></li>
+      </ol>
+    </div>
+
+  </div>
+</section>
+
+<!-- 05 Konteks Historis -->
+<section id="history" class="py-32 md:py-48 px-8 md:px-14">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-red-500 font-bold">05 / Konteks Historis</span>
+      <div class="flex-1 h-px bg-stone-800"></div>
+    </div>
+
+    <div class="grid md:grid-cols-12 gap-12 mb-16">
+      <div class="md:col-span-6 reveal">
+        <h2 class="font-display font-light leading-[0.95]" style="font-size: clamp(32px, 4.5vw, 56px);">
+          Sejarah berulang,<br><span class="italic font-extrabold" style="color: var(--danger);">kebijakan gagal.</span>
+        </h2>
+      </div>
+      <div class="md:col-span-6 reveal reveal-d-2 flex items-end">
+        <p class="text-stone-400 leading-relaxed text-sm md:text-base">
+          Data historis 2018-2026 menunjukkan pola yang berulang. Lonjakan ekstrem terjadi pada 2019 dan 2023. Tanpa intervensi struktural yang mengubah tata kelola kawasan negara dan pelibatan warga sekitar hutan, angka 2026 diperkirakan akan menyusul rekor tahun-tahun buruk sebelumnya.
+        </p>
+      </div>
+    </div>
+
+    <div class="card p-6 md:p-10 reveal reveal-d-1 mb-16 lift">
+      <div class="flex justify-between items-baseline mb-8">
+        <div class="tag">Tren Luas Terbakar Jawa Timur (2018 - 2026)</div>
+        <div class="font-mono text-xs text-stone-500">Hektar (Ha)</div>
+      </div>
+      <div class="relative h-[450px]">
+        <canvas id="trenChart"></canvas>
+      </div>
+    </div>
+    <div class="source-text">Sumber: SiPongi Kementerian Kehutanan (2018-2026)</div>
+
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-stone-800 py-12 px-8 md:px-14 bg-stone-950">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-8">
+    <div>
+      <div class="tag mb-4">Sumber Data & Pemetaan Kritis</div>
+      <ul class="text-stone-400 text-sm space-y-2">
+        <li>• Nusantara Atlas (Data kumulatif provinsi 2026)</li>
+        <li>• SiPongi Kementerian Kehutanan (Tren historis 2018-2026)</li>
+        <li>• Kliping Karhutla Agustus 2026 (Kompas, BBC, Tempo, BNPB, dll)</li>
+        <li>• BMKG & BRIN (Data Iklim & Anomali El Niño/IOD)</li>
+      </ul>
+    </div>
+    <div class="md:text-right">
+      <div class="font-mono text-xs text-stone-600 font-bold">© 2026 Analisis Kritis Karhutla Jatim</div>
+      <div class="font-mono text-xs text-stone-600 mt-2">Visualisasi Data Interaktif</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// 1. Data Historis SiPongi (2018-2026)
+const tahunSiPongi = ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
+const luasSiPongi = [8886.39, 23655.00, 19148.00, 15458.00, 2380.00, 49498.32, 20957.17, 10667.23, 10835.28];
+
+// 2. Data Top 5 Hotspot (1 Jan - 17 Sep 2026) - Dikoreksi dari total data akumulasi
+const hotspotData = [
+    { rank: 1, kab: "Malang", count: 1887 },
+    { rank: 2, kab: "Bojonegoro", count: 1436 },
+    { rank: 3, kab: "Lumajang", count: 1293 },
+    { rank: 4, kab: "Situbondo", count: 1286 },
+    { rank: 5, kab: "Banyuwangi", count: 635 }
+];
+
+// 3. Data Kliping Media Status Kawasan
+const kawasanLabels = ["Taman Nasional", "Tahura", "Perhutani", "Lahan Warga/Hutan Rakyat", "Lahan Negara/Kas Desa", "Tidak Diketahui"];
+const kawasanData = [6399.3, 400.94, 76.3, 57.175, 2.675, 4.61];
+
+// 4. Data Kliping Media Tabel & Peta
+const klipingData = [
+  { lokasi: "TNBTS (Semeru)", kab: "Lumajang", luas: 3072, status: "Taman Nasional", lat: -8.10, lng: 112.92 },
+  { lokasi: "TNBTS (Bromo)", kab: "Probolinggo", luas: 1120.3, status: "Taman Nasional", lat: -7.94, lng: 112.95 },
+  { lokasi: "TN Baluran", kab: "Situbondo", luas: 2207, status: "Taman Nasional", lat: -7.84, lng: 114.42 },
+  { lokasi: "Gunung Arjuno", kab: "Pasuruan", luas: 398.44, status: "Tahura", lat: -7.65, lng: 112.69 },
+  { lokasi: "Gunung Anjasmoro", kab: "Mojokerto", luas: 2.5, status: "Tahura", lat: -7.60, lng: 112.45 },
+  { lokasi: "Gunung Geger, Sumberejo", kab: "Malang", luas: 12, status: "Perhutani", lat: -8.05, lng: 112.50 },
+  { lokasi: "Gunung Watangan", kab: "Jember", luas: 6.5, status: "Perhutani", lat: -8.25, lng: 113.50 },
+  { lokasi: "Desa Kalipait", kab: "Banyuwangi", luas: 0.25, status: "Perhutani", lat: -8.20, lng: 114.30 },
+  { lokasi: "Arak-Arak", kab: "Situbondo", luas: 4, status: "Perhutani", lat: -7.70, lng: 114.20 },
+  { lokasi: "Arak-Arak", kab: "Bondowoso", luas: 6, status: "Perhutani", lat: -7.75, lng: 114.15 },
+  { lokasi: "Kawah Wurung", kab: "Bondowoso", luas: 10, status: "Perhutani", lat: -8.05, lng: 114.35 },
+  { lokasi: "Desa Kalikatir", kab: "Mojokerto", luas: 10, status: "Perhutani", lat: -7.55, lng: 112.40 },
+  { lokasi: "Gunung Klotok", kab: "Kediri", luas: 1.5, status: "Perhutani", lat: -7.80, lng: 112.00 },
+  { lokasi: "Gunung Pegat", kab: "Blitar", luas: 0.05, status: "Perhutani", lat: -8.10, lng: 112.20 },
+  { lokasi: "Petak 102, Kalianyar", kab: "Bondowoso", luas: 20, status: "Perhutani", lat: -8.10, lng: 114.20 },
+  { lokasi: "Desa Dadapan", kab: "Pacitan", luas: 2, status: "Perhutani", lat: -8.10, lng: 111.10 },
+  { lokasi: "Desa Kuwu", kab: "Madiun", luas: 7, status: "Lahan Warga", lat: -7.70, lng: 111.50 },
+  { lokasi: "Desa Bancangan", kab: "Ponorogo", luas: 10, status: "Lahan Warga", lat: -7.70, lng: 111.40 },
+  { lokasi: "Gunung Gombak", kab: "Ponorogo", luas: 15, status: "Lahan Warga", lat: -7.80, lng: 111.40 },
+  { lokasi: "Hutan rakyat Mategal", kab: "Magetan", luas: 8, status: "Lahan Warga", lat: -7.60, lng: 111.40 },
+  { lokasi: "Alas Koang", kab: "Pacitan", luas: 5.8, status: "Lahan Warga", lat: -8.20, lng: 111.10 },
+  { lokasi: "Desa Kandangan", kab: "Blitar", luas: 1.4, status: "Tanah Kas Desa", lat: -8.10, lng: 112.10 },
+  { lokasi: "Jalan Pacitan-Solo", kab: "Pacitan", luas: 0.775, status: "Lahan Negara", lat: -8.10, lng: 111.10 }
+];
+
+// 5. Koordinat Hotspot Detail SiPongi (120+ titik)
+const mapPoints = [
+  { kab: "BANGKALAN", kec: "Burneh", desa: "Jambuh", tgl: "01-07-2026", waktu: "15:13 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.08288, lng: 112.78149 },
+  { kab: "BANGKALAN", kec: "Galis", desa: "Lantek Barat", tgl: "10-06-2026", waktu: "15:03 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.05762, lng: 112.94629 },
+  { kab: "BANGKALAN", kec: "Arosbaya", desa: "Arosbaya", tgl: "09-08-2026", waktu: "13:54 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -6.95921, lng: 112.83982 },
+  { kab: "BANGKALAN", kec: "Bangkalan", desa: "Bancaran", tgl: "16-09-2026", waktu: "13:42 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.02331, lng: 112.76682 },
+  { kab: "BANYUWANGI", kec: "Glenmore", desa: "Tulungrejo", tgl: "28-06-2026", waktu: "14:58 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.36878, lng: 114.08289 },
+  { kab: "BANYUWANGI", kec: "Kalipuro", desa: "Bulusari", tgl: "03-09-2026", waktu: "20:14 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.06914, lng: 114.25597 },
+  { kab: "BANYUWANGI", kec: "Kalipuro", desa: "Gombengsari", tgl: "02-09-2026", waktu: "19:36 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.06681, lng: 114.2674 },
+  { kab: "BANYUWANGI", kec: "Wongsorejo", desa: "Alasbuluh", tgl: "03-09-2026", waktu: "02:36 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.05849, lng: 114.26546 },
+  { kab: "BANYUWANGI", kec: "Kalipuro", desa: "Ketapang", tgl: "02-09-2026", waktu: "00:26 WIB", sat: "NASA-NOAA20", conf: "High", lat: -8.06175, lng: 114.28111 },
+  { kab: "BANYUWANGI", kec: "Licin", desa: "Tamansari", tgl: "03-09-2026", waktu: "00:07 WIB", sat: "NASA-NOAA20", conf: "High", lat: -8.06011, lng: 114.25263 },
+  { kab: "BANYUWANGI", kec: "Bangorejo", desa: "Temurejo", tgl: "01-07-2026", waktu: "12:42 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.59809, lng: 114.2154 },
+  { kab: "BANYUWANGI", kec: "Kalipuro", desa: "Bulusan", tgl: "01-09-2026", waktu: "00:45 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.1683, lng: 114.37995 },
+  { kab: "BANYUWANGI", kec: "Kalipuro", desa: "Gombengsari", tgl: "03-09-2026", waktu: "00:07 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.06899, lng: 114.26881 },
+  { kab: "BANYUWANGI", kec: "Kalipuro", desa: "Ketapang", tgl: "02-09-2026", waktu: "00:26 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.06277, lng: 114.28703 },
+  { kab: "BANYUWANGI", kec: "Purwoharjo", desa: "Grajagan", tgl: "01-08-2026", waktu: "13:01 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.59782, lng: 114.21857 },
+  { kab: "BANYUWANGI", kec: "Wongsorejo", desa: "Alasbuluh", tgl: "03-09-2026", waktu: "00:07 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.05963, lng: 114.26353 },
+  { kab: "BANYUWANGI", kec: "Wongsorejo", desa: "Watukebo", tgl: "01-09-2026", waktu: "13:22 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.92914, lng: 114.35734 },
+  { kab: "BANYUWANGI", kec: "Kalipuro", desa: "Gombengsari", tgl: "03-09-2026", waktu: "12:25 WIB", sat: "NASA-SNPP", conf: "High", lat: -8.07265, lng: 114.2651 },
+  { kab: "BLITAR", kec: "Bakung", desa: "Bululawang", tgl: "20-07-2026", waktu: "20:27 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.29476, lng: 112.07315 },
+  { kab: "BLITAR", kec: "Panggungrejo", desa: "Bumiayu", tgl: "24-07-2026", waktu: "15:05 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.19567, lng: 112.29321 },
+  { kab: "BLITAR", kec: "Wlingi", desa: "Ngadirenggo", tgl: "13-09-2026", waktu: "20:12 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.9514, lng: 112.45889 },
+  { kab: "BLITAR", kec: "Wlingi", desa: "Ngadirenggo", tgl: "14-09-2026", waktu: "03:02 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.95006, lng: 112.45647 },
+  { kab: "BLITAR", kec: "Wonotirto", desa: "Ngeni", tgl: "07-07-2026", waktu: "20:10 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.25879, lng: 112.22436 },
+  { kab: "BLITAR", kec: "Bakung", desa: "Bakung", tgl: "17-06-2026", waktu: "13:44 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.28014, lng: 112.07259 },
+  { kab: "BLITAR", kec: "Bakung", desa: "Sidomulyo", tgl: "31-07-2026", waktu: "00:43 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.3086, lng: 112.09997 },
+  { kab: "BLITAR", kec: "Doko", desa: "Kalimanis", tgl: "16-09-2026", waktu: "01:04 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.97213, lng: 112.46919 },
+  { kab: "BLITAR", kec: "Doko", desa: "Sumberurip", tgl: "14-09-2026", waktu: "01:41 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.961, lng: 112.46774 },
+  { kab: "BLITAR", kec: "Gandusari", desa: "Krisik", tgl: "14-09-2026", waktu: "00:02 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.92534, lng: 112.43185 },
+  { kab: "BLITAR", kec: "Garum", desa: "Karangrejo", tgl: "03-07-2026", waktu: "13:46 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.01071, lng: 112.24876 },
+  { kab: "BLITAR", kec: "Kademangan", desa: "Dawuhan", tgl: "03-09-2026", waktu: "12:44 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.19161, lng: 112.13506 },
+  { kab: "BLITAR", kec: "Kademangan", desa: "Kebonsari", tgl: "11-08-2026", waktu: "13:16 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.19154, lng: 112.0804 },
+  { kab: "BLITAR", kec: "Panggungrejo", desa: "Kaligambir", tgl: "10-07-2026", waktu: "00:37 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.30803, lng: 112.27484 },
+  { kab: "BLITAR", kec: "Panggungrejo", desa: "Kalitengah", tgl: "20-07-2026", waktu: "00:49 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.20778, lng: 112.23106 },
+  { kab: "BLITAR", kec: "Panggungrejo", desa: "Margomulyo", tgl: "22-08-2026", waktu: "13:10 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.17745, lng: 112.26659 },
+  { kab: "BLITAR", kec: "Sutojayan", desa: "Jegu", tgl: "25-07-2026", waktu: "13:33 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.1545, lng: 112.25371 },
+  { kab: "BLITAR", kec: "Sutojayan", desa: "Kaulon", tgl: "13-09-2026", waktu: "12:57 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.17627, lng: 112.2769 },
+  { kab: "BLITAR", kec: "Wates", desa: "Ringinrejo", tgl: "01-09-2026", waktu: "13:22 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.29911, lng: 112.33018 },
+  { kab: "BLITAR", kec: "Wates", desa: "Tugurejo", tgl: "06-07-2026", waktu: "00:11 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.34455, lng: 112.35956 },
+  { kab: "BOJONEGORO", kec: "Dander", desa: "Ngunut", tgl: "06-09-2026", waktu: "08:20 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.25873, lng: 111.79942 },
+  { kab: "BOJONEGORO", kec: "Margomulyo", desa: "Ngelo", tgl: "13-09-2026", waktu: "20:12 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.26648, lng: 111.47106 },
+  { kab: "BOJONEGORO", kec: "Ngraho", desa: "Luwihaji", tgl: "13-09-2026", waktu: "20:12 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.264, lng: 111.48967 },
+  { kab: "BOJONEGORO", kec: "Tambakrejo", desa: "Napis", tgl: "16-07-2026", waktu: "14:54 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.36606, lng: 111.61068 },
+  { kab: "BOJONEGORO", kec: "Tambakrejo", desa: "Ngrancang", tgl: "11-09-2026", waktu: "14:58 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.33577, lng: 111.65081 },
+  { kab: "BOJONEGORO", kec: "Dander", desa: "Karangsono", tgl: "01-09-2026", waktu: "08:20 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.22241, lng: 111.7989 },
+  { kab: "BOJONEGORO", kec: "Gondang", desa: "Jari", tgl: "20-07-2026", waktu: "08:11 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.40131, lng: 111.80396 },
+  { kab: "BOJONEGORO", kec: "Margomulyo", desa: "Ngelo", tgl: "02-08-2026", waktu: "08:26 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.30993, lng: 111.44241 },
+  { kab: "BOJONEGORO", kec: "Margomulyo", desa: "Ngelo", tgl: "20-08-2026", waktu: "13:48 WIB", sat: "NASA-NOAA20", conf: "High", lat: -7.29702, lng: 111.44901 },
+  { kab: "BOJONEGORO", kec: "Bubulan", desa: "Bubulan", tgl: "25-07-2026", waktu: "00:58 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.30165, lng: 111.8009 },
+  { kab: "BOJONEGORO", kec: "Bubulan", desa: "Cancung", tgl: "08-06-2026", waktu: "13:14 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.31065, lng: 111.81971 },
+  { kab: "BOJONEGORO", kec: "Bubulan", desa: "Clebung", tgl: "01-07-2026", waktu: "12:44 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.33109, lng: 111.84505 },
+  { kab: "BOJONEGORO", kec: "Dander", desa: "Kunci", tgl: "01-07-2026", waktu: "12:44 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.29213, lng: 111.88052 },
+  { kab: "BOJONEGORO", kec: "Dander", desa: "Ngunut", tgl: "01-07-2026", waktu: "12:44 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.2624, lng: 111.81524 },
+  { kab: "BOJONEGORO", kec: "Gondang", desa: "Gondang", tgl: "01-07-2026", waktu: "12:44 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.40972, lng: 111.86787 },
+  { kab: "BOJONEGORO", kec: "Gondang", desa: "Jari", tgl: "11-07-2026", waktu: "12:55 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.39375, lng: 111.82003 },
+  { kab: "BOJONEGORO", kec: "Margomulyo", desa: "Ngelo", tgl: "01-09-2026", waktu: "13:22 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.29969, lng: 111.468 },
+  { kab: "BOJONEGORO", kec: "Margomulyo", desa: "Ngelo", tgl: "07-06-2026", waktu: "13:31 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.28316, lng: 111.45182 },
+  { kab: "BOJONEGORO", kec: "Margomulyo", desa: "Ngelo", tgl: "13-09-2026", waktu: "00:20 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.3089, lng: 111.43641 },
+  { kab: "BOJONEGORO", kec: "Ngambon", desa: "Karangmangu", tgl: "15-07-2026", waktu: "13:22 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.33169, lng: 111.74304 },
+  { kab: "BOJONEGORO", kec: "Ngasem", desa: "Bandungrejo", tgl: "01-05-2026", waktu: "00:47 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.242, lng: 111.73221 },
+  { kab: "BOJONEGORO", kec: "Ngraho", desa: "Bancer", tgl: "25-07-2026", waktu: "13:33 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.21201, lng: 111.5782 },
+  { kab: "BOJONEGORO", kec: "Ngraho", desa: "Sugihwaras", tgl: "01-08-2026", waktu: "13:01 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.29026, lng: 111.5036 },
+  { kab: "BOJONEGORO", kec: "Sekar", desa: "Bareng", tgl: "06-08-2026", waktu: "13:10 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.3818, lng: 111.72624 },
+  { kab: "BOJONEGORO", kec: "Sekar", desa: "Bobol", tgl: "01-08-2026", waktu: "13:01 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.40028, lng: 111.70016 },
+  { kab: "BOJONEGORO", kec: "Tambakrejo", desa: "Malingmati", tgl: "19-07-2026", waktu: "13:46 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.30755, lng: 111.64385 },
+  { kab: "BOJONEGORO", kec: "Tambakrejo", desa: "Napis", tgl: "02-07-2026", waktu: "12:23 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.35122, lng: 111.60263 },
+  { kab: "BOJONEGORO", kec: "Tambakrejo", desa: "Tambakrejo", tgl: "16-07-2026", waktu: "13:01 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.29639, lng: 111.63405 },
+  { kab: "BOJONEGORO", kec: "Gondang", desa: "Sambongrejo", tgl: "23-07-2026", waktu: "13:52 WIB", sat: "NASA-SNPP", conf: "High", lat: -7.42966, lng: 111.84882 },
+  { kab: "BOJONEGORO", kec: "Purwosari", desa: "Donan", tgl: "26-06-2026", waktu: "12:18 WIB", sat: "NASA-SNPP", conf: "High", lat: -7.21966, lng: 111.64201 },
+  { kab: "BONDOWOSO", kec: "Binakal", desa: "Sumber Waru", tgl: "27-08-2026", waktu: "15:20 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.96653, lng: 113.67192 },
+  { kab: "BONDOWOSO", kec: "Klabang", desa: "Leprak", tgl: "06-09-2026", waktu: "15:07 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.82917, lng: 113.91669 },
+  { kab: "BONDOWOSO", kec: "Sempol", desa: "Jampit", tgl: "04-09-2026", waktu: "03:14 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.05016, lng: 114.15346 },
+  { kab: "BONDOWOSO", kec: "Sempol", desa: "Sumber Rejo", tgl: "03-09-2026", waktu: "20:14 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.05224, lng: 114.24457 },
+  { kab: "BONDOWOSO", kec: "Tapen", desa: "Mrawan", tgl: "07-07-2026", waktu: "20:10 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.88196, lng: 113.93705 },
+  { kab: "BONDOWOSO", kec: "Botolinggo", desa: "Lanas", tgl: "03-09-2026", waktu: "14:52 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.90696, lng: 114.0355 },
+  { kab: "BONDOWOSO", kec: "Cermee", desa: "Batu Salang", tgl: "08-09-2026", waktu: "07:58 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.79524, lng: 114.07401 },
+  { kab: "BONDOWOSO", kec: "Klabang", desa: "Pandak", tgl: "06-09-2026", waktu: "15:07 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.82788, lng: 113.92548 },
+  { kab: "BONDOWOSO", kec: "Sempol", desa: "Jampit", tgl: "01-09-2026", waktu: "15:13 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -8.06957, lng: 114.14314 },
+  { kab: "BONDOWOSO", kec: "Cermee", desa: "Ramban Kulon", tgl: "13-07-2026", waktu: "12:18 WIB", sat: "NASA-NOAA20", conf: "High", lat: -7.75984, lng: 114.01995 },
+  { kab: "BONDOWOSO", kec: "Pakem", desa: "Andungsari", tgl: "04-09-2026", waktu: "12:25 WIB", sat: "NASA-NOAA20", conf: "High", lat: -7.96632, lng: 113.65249 },
+  { kab: "BONDOWOSO", kec: "Sempol", desa: "Jampit", tgl: "04-09-2026", waktu: "01:30 WIB", sat: "NASA-NOAA20", conf: "High", lat: -8.05575, lng: 114.14545 },
+  { kab: "BONDOWOSO", kec: "Binakal", desa: "Sumber Waru", tgl: "28-08-2026", waktu: "00:20 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.96349, lng: 113.6734 },
+  { kab: "BONDOWOSO", kec: "Pakem", desa: "Andungsari", tgl: "05-09-2026", waktu: "01:11 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.97123, lng: 113.64783 },
+  { kab: "BONDOWOSO", kec: "Pakem", desa: "Kupang", tgl: "04-09-2026", waktu: "12:25 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.96129, lng: 113.65019 },
+  { kab: "BONDOWOSO", kec: "Sempol", desa: "Jampit", tgl: "04-09-2026", waktu: "01:30 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.06236, lng: 114.14436 },
+  { kab: "BONDOWOSO", kec: "Sempol", desa: "Kali Gedang", tgl: "03-09-2026", waktu: "00:07 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.98664, lng: 114.21593 },
+  { kab: "BONDOWOSO", kec: "Sempol", desa: "Sumber Rejo", tgl: "03-09-2026", waktu: "12:44 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.02412, lng: 114.2063 },
+  { kab: "BONDOWOSO", kec: "Taman Krocok", desa: "Kemuningan", tgl: "27-08-2026", waktu: "13:16 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.85917, lng: 113.86882 },
+  { kab: "BONDOWOSO", kec: "Tapen", desa: "Gunung Anyar", tgl: "28-08-2026", waktu: "12:55 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.90805, lng: 113.93418 },
+  { kab: "BONDOWOSO", kec: "Tegalampel", desa: "Mandiro", tgl: "21-07-2026", waktu: "13:08 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.86668, lng: 113.826 },
+  { kab: "GRESIK", kec: "Driyorejo", desa: "Krikilan", tgl: "13-07-2026", waktu: "08:32 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.36673, lng: 112.58491 },
+  { kab: "GRESIK", kec: "Driyorejo", desa: "Tanjungan", tgl: "13-07-2026", waktu: "08:32 WIB", sat: "NASA-MODIS", conf: "High", lat: -7.35906, lng: 112.59226 },
+  { kab: "GRESIK", kec: "Benjeng", desa: "Balongmojo", tgl: "15-07-2026", waktu: "08:11 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.29456, lng: 112.48238 },
+  { kab: "GRESIK", kec: "Driyorejo", desa: "Driyorejo", tgl: "13-07-2026", waktu: "08:32 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.36876, lng: 112.60104 },
+  { kab: "GRESIK", kec: "Menganti", desa: "Hulaan", tgl: "11-09-2026", waktu: "08:17 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.28669, lng: 112.59618 },
+  { kab: "GRESIK", kec: "Benjeng", desa: "Munggugebang", tgl: "06-09-2026", waktu: "13:27 WIB", sat: "NASA-NOAA20", conf: "Low", lat: -7.2374, lng: 112.47898 },
+  { kab: "GRESIK", kec: "Balongpanggang", desa: "Babatan", tgl: "12-08-2026", waktu: "12:55 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.27477, lng: 112.41319 },
+  { kab: "GRESIK", kec: "Bungah", desa: "Masangan", tgl: "25-07-2026", waktu: "13:33 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.03853, lng: 112.55359 },
+  { kab: "GRESIK", kec: "Cerme", desa: "Banjarsari", tgl: "25-08-2026", waktu: "01:15 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.17888, lng: 112.59919 },
+  { kab: "GRESIK", kec: "Driyorejo", desa: "Anom", tgl: "03-08-2026", waktu: "01:28 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.31316, lng: 112.59169 },
+  { kab: "GRESIK", kec: "Driyorejo", desa: "Petiken", tgl: "16-08-2026", waktu: "13:22 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.3366, lng: 112.63339 },
+  { kab: "GRESIK", kec: "Kebomas", desa: "Gending", tgl: "06-07-2026", waktu: "12:50 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.17928, lng: 112.64432 },
+  { kab: "GRESIK", kec: "Manyar", desa: "Manyar Sidomukti", tgl: "11-04-2026", waktu: "12:59 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.10876, lng: 112.61558 },
+  { kab: "GRESIK", kec: "Panceng", desa: "Sukodono", tgl: "05-07-2026", waktu: "13:08 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -6.94594, lng: 112.45734 },
+  { kab: "JEMBER", kec: "Ajung", desa: "Sukamakmur", tgl: "07-06-2026", waktu: "02:32 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.23466, lng: 113.63897 },
+  { kab: "JEMBER", kec: "Mumbulsari", desa: "Lampeji", tgl: "11-08-2026", waktu: "20:01 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.23468, lng: 113.72965 },
+  { kab: "JEMBER", kec: "Silo", desa: "Harjomulyo", tgl: "10-07-2026", waktu: "20:29 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.26359, lng: 113.81295 },
+  { kab: "JEMBER", kec: "Tempurejo", desa: "Curahtakir", tgl: "14-09-2026", waktu: "15:18 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.36013, lng: 113.71096 },
+  { kab: "JEMBER", kec: "Tempurejo", desa: "Pondokrejo", tgl: "03-09-2026", waktu: "14:52 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.3468, lng: 113.70097 },
+  { kab: "JEMBER", kec: "Tempurejo", desa: "Tempurejo", tgl: "08-09-2026", waktu: "20:14 WIB", sat: "NASA-MODIS", conf: "High", lat: -8.30702, lng: 113.70181 },
+  { kab: "JEMBER", kec: "Bangsalsari", desa: "Banjarsari", tgl: "01-08-2026", waktu: "15:13 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -8.1764, lng: 113.57367 },
+  { kab: "JEMBER", kec: "Panti", desa: "Kemiri", tgl: "06-09-2026", waktu: "08:20 WIB", sat: "NASA-MODIS", conf: "Medium", lat: -7.97307, lng: 113.65276 },
+  { kab: "JEMBER", kec: "Tempurejo", desa: "Andongrejo", tgl: "01-09-2026", waktu: "13:22 WIB", sat: "NASA-NOAA20", conf: "High", lat: -8.38835, lng: 113.74209 },
+  { kab: "JEMBER", kec: "Tempurejo", desa: "Curahtakir", tgl: "01-09-2026", waktu: "13:22 WIB", sat: "NASA-NOAA20", conf: "High", lat: -8.35053, lng: 113.74011 },
+  { kab: "JEMBER", kec: "Tempurejo", desa: "Pondokrejo", tgl: "26-08-2026", waktu: "13:33 WIB", sat: "NASA-NOAA20", conf: "High", lat: -8.34806, lng: 113.6806 },
+  { kab: "JEMBER", kec: "Ambulu", desa: "Pontang", tgl: "16-09-2026", waktu: "13:42 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.33954, lng: 113.65471 },
+  { kab: "JEMBER", kec: "Bangsalsari", desa: "Badean", tgl: "13-07-2026", waktu: "12:18 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.14917, lng: 113.57254 },
+  { kab: "JEMBER", kec: "Panti", desa: "Kemiri", tgl: "01-09-2026", waktu: "13:22 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.97264, lng: 113.65854 },
+  { kab: "JEMBER", kec: "Panti", desa: "Kemiri", tgl: "12-09-2026", waktu: "00:39 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -7.98288, lng: 113.6408 },
+  { kab: "JEMBER", kec: "Puger", desa: "Grenden", tgl: "03-07-2026", waktu: "01:11 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.34872, lng: 113.46944 },
+  { kab: "JEMBER", kec: "Tempurejo", desa: "Andongrejo", tgl: "01-09-2026", waktu: "13:22 WIB", sat: "NASA-NOAA20", conf: "Medium", lat: -8.3889, lng: 113.73882 }
+];
+
+// --- SCRIPT EKSEKUSI ---
+
+// Scroll Progress & Reveal
+window.addEventListener('scroll', () => {
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('scrollProgress').style.width = ((window.scrollY / total) * 100) + '%';
+});
+const revealObs = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }); }, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// Peta 1: SiPongi
+const mapSipongi = L.map('mapSipongi', { scrollWheelZoom: true }).setView([-7.8, 113.0], 8);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri',
+  maxZoom: 18
+}).addTo(mapSipongi);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap', subdomains: 'abcd'
+}).addTo(mapSipongi);
+
+mapPoints.forEach(p => {
+  const color = p.conf === 'High' ? '#dc2626' : (p.conf === 'Medium' ? '#f59e0b' : '#a8a29e');
+  L.circleMarker([p.lat, p.lng], {
+    radius: 5, fillColor: color, color: "#ffffff", weight: 1, fillOpacity: 0.85
+  }).addTo(mapSipongi)
+  .bindPopup(`
+    <div style="font-family: 'Plus Jakarta Sans'; font-size: 13px; line-height: 1.4;">
+      <strong style="color: ${color}; font-size: 15px;">${p.kab}</strong><br>
+      <span style="color:#a8a29e">Kecamatan:</span> ${p.kec}<br>
+      <span style="color:#a8a29e">Desa:</span> ${p.desa}<br>
+      <span style="color:#a8a29e">Tanggal:</span> ${p.tgl} <span style="color:#a8a29e">(${p.waktu})</span><br>
+      <span style="color:#a8a29e">Satelit:</span> ${p.sat}<br>
+      <span style="color:#a8a29e">Confidence:</span> <strong>${p.conf}</strong>
+    </div>
+  `);
+});
+
+// Peta 2: Kliping Media
+const mapKliping = L.map('mapKliping', { scrollWheelZoom: true }).setView([-7.8, 113.0], 8);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri',
+  maxZoom: 18
+}).addTo(mapKliping);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap', subdomains: 'abcd'
+}).addTo(mapKliping);
+
+klipingData.forEach(p => {
+  const color = p.status === "Taman Nasional" ? '#dc2626' : (p.status === "Tahura" || p.status === "Perhutani" ? '#f59e0b' : '#a8a29e');
+  // Ukuran diseragamkan dan dibuat lebih bagus dengan border putih
+  L.circleMarker([p.lat, p.lng], {
+    radius: 7,
+    fillColor: color,
+    color: "#ffffff",
+    weight: 1.5,
+    fillOpacity: 0.9
+  }).addTo(mapKliping)
+  .bindPopup(`
+    <div style="font-family: 'Plus Jakarta Sans'; font-size: 13px; line-height: 1.4;">
+      <strong style="color: ${color}; font-size: 15px;">${p.lokasi}</strong><br>
+      <span style="color:#a8a29e">Kabupaten:</span> ${p.kab}<br>
+      <span style="color:#a8a29e">Status:</span> ${p.status}<br>
+      <span style="color:#a8a29e">Luas Terbakar:</span> <strong>${p.luas.toLocaleString('id-ID')} Ha</strong>
+    </div>
+  `);
+});
+
+// Tabel Hotspot
+const hotspotTableEl = document.getElementById('hotspotTable');
+hotspotData.forEach((d, i) => {
+  const row = document.createElement('tr');
+  row.className = 'hover:bg-stone-900 transition-colors';
+  row.innerHTML = `
+    <td class="px-6 py-4 font-mono text-stone-500 w-12 font-bold">${String(i+1).padStart(2,'0')}</td>
+    <td class="px-6 py-4 font-medium text-stone-100">${d.kab}</td>
+    <td class="px-6 py-4 text-right font-mono text-stone-100 font-bold">${d.count.toLocaleString('id-ID')} <span class="text-stone-500 text-xs">titik</span></td>
+  `;
+  hotspotTableEl.appendChild(row);
+});
+
+// Tabel Kliping
+const klipingTableEl = document.getElementById('klipingTable');
+klipingData.forEach(d => {
+  const row = document.createElement('tr');
+  row.className = 'hover:bg-stone-900 transition-colors';
+  const statusColor = d.status === "Taman Nasional" ? 'text-red-500' : (d.status.includes("Perhutani") || d.status.includes("Tahura") ? 'text-orange-500' : 'text-stone-400');
+  row.innerHTML = `
+    <td class="px-6 py-4 font-medium text-stone-100">${d.lokasi}</td>
+    <td class="px-6 py-4 text-stone-400">${d.kab}</td>
+    <td class="px-6 py-4 font-mono text-xs ${statusColor} font-bold">${d.status}</td>
+    <td class="px-6 py-4 text-right font-mono text-stone-100 font-bold">${d.luas.toLocaleString('id-ID')} <span class="text-stone-500 text-xs">Ha</span></td>
+  `;
+  klipingTableEl.appendChild(row);
+});
+
+// Chart Tren Historis
+const ctxTren = document.getElementById('trenChart').getContext('2d');
+new Chart(ctxTren, {
+  type: 'bar',
+  data: {
+    labels: tahunSiPongi,
+    datasets: [{
+      data: luasSiPongi,
+      backgroundColor: luasSiPongi.map(v => {
+        if (v > 40000) return '#dc2626';
+        if (v < 3000) return '#84cc16';
+        return '#f97316';
+      }),
+      borderRadius: 4, barThickness: 30
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { backgroundColor: '#0a0a0a', callbacks: { label: (ctx) => ctx.raw.toLocaleString('id-ID') + ' Ha' } }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#a8a29e', font: { family: 'JetBrains Mono', size: 11 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a29e', font: { family: 'JetBrains Mono', size: 10 }, callback: (v) => v.toLocaleString('id-ID') } }
+    }
+  }
+});
+
+// Chart Status Kawasan
+const ctxKawasan = document.getElementById('kawasanChart').getContext('2d');
+new Chart(ctxKawasan, {
+  type: 'bar',
+  data: {
+    labels: kawasanLabels,
+    datasets: [{
+      data: kawasanData,
+      backgroundColor: ['#dc2626', '#f59e0b', '#f97316', '#84cc16', '#3b82f6', '#6b7280'],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { backgroundColor: '#0a0a0a', callbacks: { label: (ctx) => ctx.raw.toLocaleString('id-ID', {minimumFractionDigits: 2}) + ' Ha' } }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a29e', callback: (v) => v + ' Ha' } },
+      y: { grid: { display: false }, ticks: { color: '#f5f5f4', font: { size: 13, weight: 'bold' } } }
+    }
+  }
+});
+</script>
+</body>
+</html>
